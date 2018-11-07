@@ -41,10 +41,10 @@ func main() {
 
 func SendRequest(accessKey, secretKey, country, start, count string) string {
 	dateTz, query, authorization := CreateHeaders(accessKey, secretKey, country, start, count)
-	requestUrl := AtsApiUrl + "?" + query
+	url := AtsApiUrl + "?" + query
 
 	// new request
-	req, _ := http.NewRequest("GET", requestUrl, nil)
+	req, _ := http.NewRequest("GET", url, nil)
 	req.Header.Set("Accept", "application/xml")
 	req.Header.Set("Content-Type", "application/xml")
 	req.Header.Set("X-Amz-Date", dateTz)
@@ -55,7 +55,14 @@ func SendRequest(accessKey, secretKey, country, start, count string) string {
 		// set 10s timeout
 		Timeout: time.Duration(10 * time.Second),
 	}
-	response, _ := client.Do(req)
+	response, err := client.Do(req)
+
+	if err != nil {
+		fmt.Println("Request Failed")
+		fmt.Println(err.Error())
+		os.Exit(1)
+	}
+
 	defer response.Body.Close()
 
 	// return response
