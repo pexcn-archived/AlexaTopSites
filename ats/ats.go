@@ -26,6 +26,7 @@ func main() {
 		fmt.Println()
 		fmt.Println("Usage:")
 		fmt.Println("    ./ats access_key secret_key [country_code] [start_number] [count]")
+		fmt.Println()
 		return
 	}
 
@@ -71,13 +72,11 @@ func SendRequest(accessKey, secretKey, country, start, count string) string {
 }
 
 func CreateHeaders(accessKey, secretKey, country, start, count string) (string, string, string) {
-	// TODO: opimize
 	location, _ := time.LoadLocation("UTC")
 	now := time.Now().In(location)
 	date := now.Format(DateFormat)
 	dateTz := now.Format(DateTzFormat)
 
-	// TODO: opimize
 	query := "Action=TopSites&Count=" + count + "&CountryCode=" + country + "&ResponseGroup=Country" + "&Start=" + start
 	headers := "host:" + AtsServiceEndpoint + "\n" + "x-amz-date:" + dateTz + "\n"
 	signedHeaders := "host;x-amz-date"
@@ -88,14 +87,14 @@ func CreateHeaders(accessKey, secretKey, country, start, count string) (string, 
 	scope := date + "/" + AtsServiceRegion + "/" + AtsServiceName + "/aws4_request"
 
 	signingData := algorithm + "\n" + dateTz + "\n" + scope + "\n" + Sha256Hex(request)
-	signingKey := GetSignatureKey(secretKey, date)
+	signingKey := GenSignatureKey(secretKey, date)
 	signature := HmacSha256Hex(signingData, signingKey)
 
 	authorization := algorithm + " " + "Credential=" + accessKey + "/" + scope + ", " + "SignedHeaders=" + signedHeaders + ", " + "Signature=" + signature
 	return dateTz, query, authorization
 }
 
-func GetSignatureKey(secretKey, date string) string {
+func GenSignatureKey(secretKey, date string) string {
 	kSecret := []byte("AWS4" + secretKey)
 	kDate := HmacSha256(date, kSecret)
 	kRegion := HmacSha256(AtsServiceRegion, kDate)
