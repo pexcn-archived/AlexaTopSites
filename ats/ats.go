@@ -23,11 +23,8 @@ const (
 
 func main() {
 	if len(os.Args) != 6 {
-		fmt.Println()
-		fmt.Println("Usage:")
-		fmt.Println("    ./ats access_key secret_key [country_code] [start_number] [count]")
-		fmt.Println()
-		return
+		Help()
+		os.Exit(0)
 	}
 
 	accessKey := os.Args[1]
@@ -101,4 +98,11 @@ func GenSignatureKey(secretKey, date string) string {
 	kService := HmacSha256(AtsServiceName, kRegion)
 	kSignature := HmacSha256("aws4_request", kService)
 	return string(kSignature)
+}
+
+func Help() {
+	fmt.Println()
+	fmt.Println("Usage:")
+	fmt.Println("    ./ats access_key secret_key [country_code] [start_number] [count]")
+	fmt.Println()
 }
