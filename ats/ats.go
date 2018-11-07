@@ -23,8 +23,9 @@ const (
 
 func main() {
 	if len(os.Args) != 6 {
+		fmt.Println()
 		fmt.Println("Usage:")
-		fmt.Println("\t./<application_name> access_key secret_key [country_code] [start_number] [count]")
+		fmt.Println("    ./ats access_key secret_key [country_code] [start_number] [count]")
 		return
 	}
 
