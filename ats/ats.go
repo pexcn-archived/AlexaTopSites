@@ -36,7 +36,7 @@ func main() {
 	count := os.Args[5]
 
 	response := SendRequest(accessKey, secretKey, country, start, count)
-	fmt.Println(response)
+	fmt.Print(response)
 }
 
 func SendRequest(accessKey, secretKey, country, start, count string) string {
@@ -52,8 +52,8 @@ func SendRequest(accessKey, secretKey, country, start, count string) string {
 
 	// send request
 	client := &http.Client{
-		// set 5s timeout
-		Timeout: time.Duration(5 * time.Second),
+		// set 10s timeout
+		Timeout: time.Duration(10 * time.Second),
 	}
 	response, _ := client.Do(req)
 	defer response.Body.Close()
